@@ -35,6 +35,8 @@ def load_videogpt(path, replicate=True, ae=None):
     
 def load_vqgan(path, replicate=True):
     config = pickle.load(open(osp.join(path, 'args'), 'rb'))
+    config.ae['ch_mult'] = [1,2,2]
+    config.ae['patch_size'] = [4,4]
     model = VQGAN(**config.ae)
     
     mask_file = osp.join(path, 'mask_map.pkl')

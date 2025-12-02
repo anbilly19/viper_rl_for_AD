@@ -109,7 +109,7 @@ def load_dataset(config, train, modality='video'):
                     x_i['label'] = np.full(batch_per_dset, dataset_labels[idx], dtype=np.int32)
                     batch.append(x_i)
                     idx = (idx + 1) % len(datasets)
-                batch = jax.tree_map(_fn, *batch)
+                batch = jax.tree_util.tree_map(_fn, *batch)
                 yield batch
         dataset = combine(datasets, dataset_labels)
         
@@ -129,7 +129,7 @@ def prepare(dataset, batch_size, initial_shape=None):
             if initial_shape is not None:
                 x = x.reshape(*initial_shape, *x.shape[1:])
             return x
-        xs = jax.tree_map(_prepare, xs)
+        xs = jax.tree_util.tree_map(_prepare, xs)
         return xs
     iterator = map(prepare_tf_data, dataset)
     return iterator
