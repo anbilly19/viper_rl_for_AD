@@ -16,7 +16,7 @@ internetarchive==5.0.5
 cloudpickle==1.6.0
 crafter==1.8.3
 jax==0.4.13
-jaxlib==0.4.11+cuda11.cudnn86 -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+https://storage.googleapis.com/jax-releases/cuda11/jaxlib-0.4.11+cuda11.cudnn86-cp38-cp38-manylinux2014_x86_64.whl
 numpy==1.24.3
 optax==0.1.7
 rich==14.2.0
