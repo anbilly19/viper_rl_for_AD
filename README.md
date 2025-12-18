@@ -1,3 +1,8 @@
+************************************************
+**Forked repo for benchmarking and research, this code contains some minor changes to make runnable on a personal environment, check the original in the links below.**
+
+*************************************************
+
 # Video Prediction Models as Rewards for Reinforcement Learning
 
 Code for VIPER (Video Predcition Rewards), a general algorithm which leverages video prediction models as priors for Reinforcement Learning.
@@ -20,16 +25,8 @@ For more information:
 - [Project website][website]
 - [Twitter summary][tweet]
 
-## VIPER 🐍
-
-VIPER leverages the next-frame log likelihoods of a pre-trained video prediction model as rewards for downstream reinforcement learning tasks. The method is flexible to the particular choice of video prediction model and reinforcement learning algorithm. The general method outline is shown below:
-
-<img src='https://github.com/Alescontrela/viper_rl/assets/13845012/ee402c86-152a-4cdc-b728-8120d4b574dd' width='75%'>
-
-This code release provides a reference VIPER implementation which uses [VideoGPT](https://arxiv.org/abs/2104.10157) as the video prediction model and [DreamerV3](https://arxiv.org/abs/2301.04104) as the reinforcement learning agorithm.
-
-## Install:
-
+## Install :
+### adopted from original
 Create a conda environment with Python 3.8:
 
 ```
@@ -37,7 +34,7 @@ conda create -n viper python=3.8
 conda activate viper
 ```
 
-Install [Jax][jax].
+Install [Jax][jax]. (need not be separately installed the exact .whl file is linked in requirements already)
 
 Install dependencies:
 ```
@@ -105,3 +102,9 @@ Custom checkpoint directories can be specified with the `$VIPER_CHECKPOINT_DIR` 
 [website]: https://escontrela.me/viper
 [tweet]: https://twitter.com/AleEscontrela/status/1661363555495710721?s=20
 [ataripy]: https://github.com/openai/atari-py
+
+
+## Plotting function for Reward model vs. Anomaly GT
+
+Refer file -> ![reward_plots.py](./notebooks/reward_plots.py)
+
