@@ -124,10 +124,10 @@ Refer file -> [reward_plots.py](./notebooks/reward_plots.py)
 
 Each processed .npz file generates a PNG plot containing:
 
-Blue line: Frame-by-frame reward density scores (left y-axis)
+- Blue line: Frame-by-frame reward density scores (left y-axis)
 
-Red line (only in mixed): Anomaly labels from source_label (right y-axis)
+- Red line (only in mixed): Anomaly labels from source_label (right y-axis)
 
-X-axis: Frame index
+- X-axis: Frame index
 
-Title: Original filename
+- Title: Original filename
