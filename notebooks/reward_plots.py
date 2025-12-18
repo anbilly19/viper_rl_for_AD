@@ -3,8 +3,9 @@ import sys
 import pathlib
 import tqdm
 import matplotlib.pyplot as plt
-from matplotlib import ticker
 import numpy as np
+import argparse  # Added for CLI
+
 
 # Add parent directory to path for imports
 directory = pathlib.Path(__file__).resolve()
@@ -14,9 +15,6 @@ sys.path.append(str(directory.parent))
 import notebook_utils as nbu
 from viper_rl.videogpt.reward_models import LOAD_REWARD_MODEL_DICT
 
-# Environment setup
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
 
 def save_plot_to_png(values, 
                      source_labels=None,
@@ -62,7 +60,7 @@ def save_plot_to_png(values,
         lines = line1 + line2
 
     # Create combined legend
-    labels = [l.get_label() for l in lines]
+    labels = [line.get_label() for line in lines]
     ax1.legend(lines, labels, loc="upper right")
     
     ax1.set_title(title)
@@ -136,35 +134,65 @@ def plot_rewards_from_npz_files(file_list,
 # --- Main Execution ---
 
 if __name__ == "__main__":
-    # Configuration
-    rm_key = 'dmc_clen16_fskip4'
-    task = 'dmc_cartpole_balance'
+    # Parsing CLI Arguments
+    parser = argparse.ArgumentParser(description="Evaluate and plot reward model outputs for npz sequences.")
     
-    # Change to 'mixed', 'normal', or 'random'
-    quality = 'random' 
+    parser.add_argument("--rm_key", type=str, default='dmc_clen16_fskip4', 
+                        help="Key for the reward model dictionary.")
+    parser.add_argument("--task", type=str, default='dmc_cartpole_balance', 
+                        help="DMC task name.")
+    parser.add_argument("--quality", type=str, default='random', 
+                        choices=['mixed', 'normal', 'random'], 
+                        help="Data quality level.")
+    parser.add_argument("--input_dir", type=str, default=None, 
+                        help="Path to input .npz directory. If None, uses default path structure.")
+    parser.add_argument("--output_dir", type=str, default="notebooks/plots", 
+                        help="Base directory to save output plots.")
+    parser.add_argument("--num_files", type=int, default=5, 
+                        help="Number of files to process. Set to -1 to process all.")
+    parser.add_argument("--device", type=str, default='0', 
+                        help="CUDA_VISIBLE_DEVICES ID.")
+
+    args = parser.parse_args()
+
+    # Environment setup
+    os.environ['CUDA_VISIBLE_DEVICES'] = args.device
+    os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
     
-    print(f"Loading reward model: {rm_key}")
-    reward_model = LOAD_REWARD_MODEL_DICT[rm_key](
-        task=task, 
+    print(f"Loading reward model: {args.rm_key}")
+    reward_model = LOAD_REWARD_MODEL_DICT[args.rm_key](
+        task=args.task, 
         minibatch_size=2, 
         encoding_minibatch_size=32, 
         compute_joint=True
     )
 
-    # Define your directory
-    sequence_dir = f'/work/MLShare/vadrl_v5/dmc/test/{quality}/cartpole_balance'
+    task_name = args.task.replace('dmc_','')  # Extract task name without 'dmc_'] 
+    # Determine Input Directory
+    if args.input_dir:
+        sequence_dir = args.input_dir
+    else:
+        # Default path logic from original script
+        # Note: 'cartpole_balance' part is hardcoded here matching original logic
+        # You may want to make this dynamic based on args.task if needed
+        sequence_dir = f'/work/MLShare/vadrl_v5/dmc/test/{args.quality}/{task_name}'
     
     if os.path.exists(sequence_dir):
         all_files = [os.path.join(sequence_dir, f) for f in os.listdir(sequence_dir) if f.endswith('.npz')]
         all_files.sort()
         
-        # Test with first few files
-        example_files = all_files[:5]
+        # Filter files based on num_files argument
+        if args.num_files != -1:
+            files_to_process = all_files[:args.num_files]
+        else:
+            files_to_process = all_files
+        
+        output_subdir = os.path.join(args.output_dir, f"{args.quality}_{task_name}")
         
         plot_rewards_from_npz_files(
-            example_files, 
+            files_to_process, 
             reward_model, 
-            output_dir=f"notebooks/plots/{quality}_{task}"
+            output_dir=output_subdir
         )
     else:
         print(f"Directory not found: {sequence_dir}")

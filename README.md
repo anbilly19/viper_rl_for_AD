@@ -106,5 +106,28 @@ Custom checkpoint directories can be specified with the `$VIPER_CHECKPOINT_DIR` 
 
 ## Plotting function for Reward model vs. Anomaly GT
 
-Refer file -> ![reward_plots.py](./notebooks/reward_plots.py)
+Refer file -> [reward_plots.py](./notebooks/reward_plots.py)
 
+### Command line arguments
+
+| Argument     | Type | Default              | Description                                                       |
+| ------------ | ---- | -------------------- | ----------------------------------------------------------------- |
+| --rm_key     | str  | dmc_clen16_fskip4    | Reward model identifier key from LOAD_REWARD_MODEL_DICT           |
+| --task       | str  | dmc_cartpole_balance | DMC task name (e.g., dmc_cartpole_balance, dmc_walker_walk)       |
+| --quality    | str  | random               | Data quality level: mixed, normal, or random                      |
+| --input_dir  | str  | None                 | Custom input directory path. If None, uses default path structure |
+| --output_dir | str  | notebooks/plots      | Base directory for saving output plots                            |
+| --num_files  | int  | 5                    | Number of files to process. Use -1 to process all files           |
+| --device     | str  | 0                    | GPU device ID for CUDA_VISIBLE_DEVICES                            |
+
+### Expected Output
+
+Each processed .npz file generates a PNG plot containing:
+
+Blue line: Frame-by-frame reward density scores (left y-axis)
+
+Red line (only in mixed): Anomaly labels from source_label (right y-axis)
+
+X-axis: Frame index
+
+Title: Original filename
