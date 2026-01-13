@@ -110,16 +110,16 @@ Refer file -> [reward_plots.py](./notebooks/reward_plots.py)
 
 ### Command line arguments
 
-| Argument     | Type | Default              | Description                                                       |
-| ------------ | ---- | -------------------- | ----------------------------------------------------------------- |
-| --rm_key     | str  | dmc_clen16_fskip4    | Reward model identifier key from LOAD_REWARD_MODEL_DICT           |
-| --task       | str  | dmc_cartpole_balance | DMC task name (e.g., dmc_cartpole_balance, dmc_walker_walk)       |
-| --quality    | str  | random               | Data quality level: mixed, normal, or random                      |
-| --input_dir  | str  | None                 | Custom input directory path. If None, uses default path structure |
-| --output_dir | str  | notebooks/plots      | Base directory for saving output plots                            |
-| --num_files  | int  | 5                    | Number of files to process. Use -1 to process all files           |
-| --device     | str  | 0                    | GPU device ID for CUDA_VISIBLE_DEVICES                            |
-
+| Argument     | Type | Default              | Description                                                                                            |
+| ------------ | ---- | -------------------- | ------------------------------------------------------------------------------------------------------ |
+| --rm_key     | str  | dmc_clen16_fskip4    | Reward model identifier key from LOAD_REWARD_MODEL_DICT                                                |
+| --task       | str  | dmc_cartpole_balance | DMC task name (e.g., dmc_cartpole_balance, dmc_walker_walk)                                            |
+| --quality    | str  | random               | Data quality level: mixed, normal, or random                                                           |
+| --input_dir  | str  | None                 | Custom input directory path. If None, uses default path structure                                      |
+| --npz_files  | list | None                 | (New) Overlay-only .npz files or directories containing 'rewards' key. Matches full files by filename. |
+| --output_dir | str  | notebooks/plots      | Base directory for saving output plots                                                                 |
+| --num_files  | int  | 5                    | Number of files to process. Use -1 to process all files                                                |
+| --device     | str  | 0                    | GPU device ID for CUDA_VISIBLE_DEVICES                                                                 |
 ### Expected Output
 
 Each processed .npz file generates a PNG plot containing:
@@ -127,7 +127,36 @@ Each processed .npz file generates a PNG plot containing:
 - Blue line: Frame-by-frame reward density scores (left y-axis)
 
 - Red line (only in mixed): Anomaly labels from source_label (right y-axis)
+- Green line: Foreign model rewards
 
 - X-axis: Frame index
 
 - Title: Original filename
+
+### Calculate rewards from another model and save it as npz array
+
+Refer file -> [random_rewards.py](./notebooks/random_rewards.py)
+
+Use this with the desired arguements to calculate the rewards from a foreign model and save the results as numpy array (.npz) files. That can be input in `reward_plots.py` described above 
+
+Copy the file into the `AdoRe/src/adore/ad_rewards/mae` folder.
+
+| Argument       | Type | Default                           | Description                                                       |
+| -------------- | ---- | --------------------------------- | ----------------------------------------------------------------- |
+| --input_dir    | str  | Required                          | Folder containing *.npz clips.                                    |
+| --output_dir   | str  | Required                          | Folder to write reward *.npz files into.                          |
+| --num          | int  | 3 (Required)                      | How many random *.npz files to process.                           |
+| --seed         | int  | None                              | Random seed for reproducible sampling.                            |
+| --ckpt         | str  | AdoRe/.../checkpoint-epoch012.pth | Path to the model checkpoint file.                                |
+| --cfg_root     | str  | None                              | Root configuration directory path.                                |
+| --device       | str  | cuda                              | Computing device (e.g., cuda or cpu).                             |
+| --no_norm      | bool | False                             | Flag to return raw fused values (disables min-max normalization). |
+| --no_png_grad  | bool | False                             | Flag to skip reading dataset gradient PNGs.                       |
+| --neighbor_gap | int  | 3                                 | Gap size for neighbor calculations.                               |
+| --smooth_range | int  | 0                                 | Range parameter for smoothing operations.                         |
+| --smooth_mu    | int  | 0                                 | Mean parameter for smoothing operations.                          |
+
+### Expected Output
+
+A folder named `ad_rl_rewards/cheetah_run` with the .npz files.
+
