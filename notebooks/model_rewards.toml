@@ -1,0 +1,3 @@
+[models]
+mae = "/path/to/mae/rewards"
+vadrl = "/path/to/vadrl/rewards"
